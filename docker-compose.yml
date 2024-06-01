@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: edna
+      MYSQL_DATABASE: bookdb
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  app:
+    build: .
+    container_name: ManagerBookAPI
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_USERNAME=root
+      - DB_PASSWORD=edna
+      - DB_URL=jdbc:mysql://mysql:3306/bookdb
+    depends_on:
+      - mysql
+
+  consumer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: consumer
+    depends_on:
+      - mysql
+
+volumes:
+  mysql-data:
