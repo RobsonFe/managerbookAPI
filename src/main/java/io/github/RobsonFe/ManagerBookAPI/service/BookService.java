@@ -3,6 +3,7 @@ package io.github.RobsonFe.ManagerBookAPI.service;
 import io.github.RobsonFe.ManagerBookAPI.dto.BookDTO;
 import io.github.RobsonFe.ManagerBookAPI.dto.MessageResponseDTO;
 import io.github.RobsonFe.ManagerBookAPI.entity.Book;
+import io.github.RobsonFe.ManagerBookAPI.exception.BookNotFoundExeption;
 import io.github.RobsonFe.ManagerBookAPI.mapper.BookMapper;
 import io.github.RobsonFe.ManagerBookAPI.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +32,8 @@ public class BookService {
                 .build();
     }
 
-    public BookDTO findById(Long id){
-        Optional<Book> byId = bookRepository.findById(id);
-        return bookMapper.toDTO(byId.get());
+    public BookDTO findById(Long id) throws BookNotFoundExeption {
+       Book book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundExeption(id));
+        return bookMapper.toDTO(book);
     }
 }

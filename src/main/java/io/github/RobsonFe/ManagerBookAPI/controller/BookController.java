@@ -1,6 +1,7 @@
 package io.github.RobsonFe.ManagerBookAPI.controller;
 import io.github.RobsonFe.ManagerBookAPI.dto.BookDTO;
 import io.github.RobsonFe.ManagerBookAPI.dto.MessageResponseDTO;
+import io.github.RobsonFe.ManagerBookAPI.exception.BookNotFoundExeption;
 import io.github.RobsonFe.ManagerBookAPI.repository.BookRepository;
 import io.github.RobsonFe.ManagerBookAPI.service.BookService;
 import jakarta.validation.Valid;
@@ -22,7 +23,7 @@ public class BookController {
     }
 
     @GetMapping("/search/{id}")
-    public BookDTO findById(@PathVariable Long id){
+    public BookDTO findById(@PathVariable Long id) throws BookNotFoundExeption {
         return bookService.findById(id);
     }
 
