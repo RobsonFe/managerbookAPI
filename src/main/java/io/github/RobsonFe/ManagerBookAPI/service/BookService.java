@@ -8,6 +8,8 @@ import io.github.RobsonFe.ManagerBookAPI.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class BookService {
 
@@ -27,5 +29,10 @@ public class BookService {
         return MessageResponseDTO.builder()
                 .message("Book created com ID " + savedBook.getId())
                 .build();
+    }
+
+    public BookDTO findById(Long id){
+        Optional<Book> byId = bookRepository.findById(id);
+        return bookMapper.toDTO(byId.get());
     }
 }

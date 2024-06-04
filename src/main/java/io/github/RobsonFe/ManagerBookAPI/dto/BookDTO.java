@@ -32,5 +32,5 @@ public class BookDTO {
         String publisherName;
         @Valid
         @NotNull
-        Author author;
+        AuthorDTO author;
 }
