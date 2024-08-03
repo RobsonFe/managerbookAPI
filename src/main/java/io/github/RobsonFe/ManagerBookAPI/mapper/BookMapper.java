@@ -6,7 +6,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(uses = AuthorMapper.class) // Especifica que AuthorMapper será usado
 public interface BookMapper {
     BookMapper INSTANCE = Mappers.getMapper(BookMapper.class);
 
@@ -16,3 +16,4 @@ public interface BookMapper {
     @Mapping(target = "author", source = "author") // Mapeia explicitamente o autor
     Book toModel(BookDTO bookDTO);
 }
+
