@@ -54,7 +54,22 @@ public class BookController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("buscar/{id}")
     public BookDTO findById(@PathVariable Long id) throws BookNotFoundExeption {
-        return bookService.findById(id);
+            return bookService.findById(id);
+    }
+    
+    @Operation(summary = "Busca um livro pelo Nome", description = "Retorna os detalhes de um livro específico com base no Nome fornecido")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Livro encontrado",
+                    content = @Content(schema = @Schema(implementation = BookDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Livro não encontrado",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Erro no servidor",
+                    content = @Content)
+    })
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("find/{name}")
+    public BookDTO findByName(@PathVariable String name) throws BookNotFoundExeption {
+        return bookService.findByName(name);
     }
 
     @Operation(summary = "Lista todos os livros", description = "Retorna uma lista de todos os livros na biblioteca")

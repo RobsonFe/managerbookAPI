@@ -36,6 +36,11 @@ public class BookService {
         return bookMapper.toDTO(book);
     }
 
+    public BookDTO findByName(String name) throws BookNotFoundExeption {
+        Book book = verifyIfName(name);
+        return bookMapper.toDTO(book);
+    }
+
     public Page<BookDTO> findAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Book> books = bookRepository.findAll(pageable);
@@ -60,5 +65,11 @@ public class BookService {
     private Book verifyIfExists(Long id) throws BookNotFoundExeption {
         return bookRepository.findById(id).orElseThrow(() -> new BookNotFoundExeption(id));
     }
+
+    private Book verifyIfName(String name) throws BookNotFoundExeption {
+    return bookRepository.findByName(name)
+            .orElseThrow(() -> new BookNotFoundExeption(name));
+}
+
 }
 
