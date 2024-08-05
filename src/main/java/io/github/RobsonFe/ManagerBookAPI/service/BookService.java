@@ -6,11 +6,11 @@ import io.github.RobsonFe.ManagerBookAPI.entity.Book;
 import io.github.RobsonFe.ManagerBookAPI.exception.BookNotFoundExeption;
 import io.github.RobsonFe.ManagerBookAPI.mapper.BookMapper;
 import io.github.RobsonFe.ManagerBookAPI.repository.BookRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class BookService {
@@ -36,11 +36,10 @@ public class BookService {
         return bookMapper.toDTO(book);
     }
 
-    public List<BookDTO> findAll() {
-        List<Book> books = bookRepository.findAll();
-        return books.stream()
-                .map(bookMapper::toDTO)
-                .collect(Collectors.toList());
+    public Page<BookDTO> findAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Book> books = bookRepository.findAll(pageable);
+        return books.map(bookMapper::toDTO); 
     }
 
     public MessageResponseDTO update(Long id, BookDTO bookDTO) throws BookNotFoundExeption {

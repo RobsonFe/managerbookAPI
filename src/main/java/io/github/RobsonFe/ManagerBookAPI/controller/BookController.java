@@ -11,10 +11,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/books")
@@ -66,8 +66,11 @@ public class BookController {
     })
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("listar")
-    public List<BookDTO> findAll() {
-        return bookService.findAll();
+    public Page<BookDTO> findAll(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "5") int size
+    ) {
+        return bookService.findAll(page,size);
     }
 
     @Operation(summary = "Atualiza um livro", description = "Atualiza as informações de um livro existente")
