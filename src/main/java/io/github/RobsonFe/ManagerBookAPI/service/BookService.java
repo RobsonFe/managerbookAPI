@@ -27,7 +27,7 @@ public class BookService {
         Book bookToSave = bookMapper.toModel(bookDTO);
         Book savedBook = bookRepository.save(bookToSave);
         return MessageResponseDTO.builder()
-                .message("Book created com ID " + savedBook.getId())
+                .message("O livro foi criado com sucesso: " + savedBook)
                 .build();
     }
 
