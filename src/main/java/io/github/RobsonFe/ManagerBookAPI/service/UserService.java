@@ -2,13 +2,14 @@ package io.github.RobsonFe.ManagerBookAPI.service;
 
 import io.github.RobsonFe.ManagerBookAPI.dto.UserDTO;
 import io.github.RobsonFe.ManagerBookAPI.dto.MessageResponseDTO;
-import io.github.RobsonFe.ManagerBookAPI.entity.User;
+import io.github.RobsonFe.ManagerBookAPI.entity.UserModel;
 import io.github.RobsonFe.ManagerBookAPI.exception.UserNotFoundException;
 import io.github.RobsonFe.ManagerBookAPI.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -18,42 +19,53 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder; // Injetando o PasswordEncoder
 
+    // Criação do usuário com a senha encriptografada
     public MessageResponseDTO create(@Valid UserDTO userDTO) {
-        User user = User.builder()
+        // Criptografando a senha
+        String encryptedPassword = passwordEncoder.encode(userDTO.getPassword());
+
+        // Construindo o modelo de usuário
+        UserModel userModel = UserModel.builder()
                 .username(userDTO.getUsername())
                 .email(userDTO.getEmail())
-                .password(userDTO.getPassword())
+                .password(encryptedPassword) // Usando a senha criptografada
                 .build();
-        userRepository.save(user);
+
+        // Salvando no banco de dados
+        userRepository.save(userModel);
 
         return MessageResponseDTO.builder()
-                .message("User created successfully with ID " + user.getId())
+                .message("User created successfully with ID " + userModel.getId())
                 .build();
     }
 
     public UserDTO findById(Long id) throws UserNotFoundException {
-        User user = verifyIfExists(id);
-        return new UserDTO(user.getUsername(), user.getEmail(), user.getPassword(), null);
+        UserModel userModel = verifyIfExists(id);
+        return new UserDTO(userModel.getUsername(), userModel.getEmail(), userModel.getPassword(), null);
     }
 
     public Page<UserDTO> findAll(int page, int size) {
         return userRepository.findAll(PageRequest.of(page, size)).map(
-                user -> new UserDTO(user.getUsername(), user.getEmail(), user.getPassword(), null)
+                userModel -> new UserDTO(userModel.getUsername(), userModel.getEmail(), userModel.getPassword(), null)
         );
     }
 
     public MessageResponseDTO update(Long id, @Valid UserDTO userDTO) throws UserNotFoundException {
         verifyIfExists(id);
 
-        User updatedUser = User.builder()
+        // Criptografando a nova senha
+        String encryptedPassword = passwordEncoder.encode(userDTO.getPassword());
+
+        UserModel updatedUserModel = UserModel.builder()
                 .id(id)
                 .username(userDTO.getUsername())
                 .email(userDTO.getEmail())
-                .password(userDTO.getPassword())
+                .password(encryptedPassword) // Usando a senha criptografada na atualização
                 .build();
 
-        userRepository.save(updatedUser);
+        userRepository.save(updatedUserModel);
 
         return MessageResponseDTO.builder()
                 .message("User updated successfully with ID " + id)
@@ -65,8 +77,8 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    private User verifyIfExists(Long id) throws UserNotFoundException {
-        Optional<User> user = userRepository.findById(id);
+    private UserModel verifyIfExists(Long id) throws UserNotFoundException {
+        Optional<UserModel> user = userRepository.findById(id);
         if (user.isEmpty()) {
             throw new UserNotFoundException(id);
         }
