@@ -9,8 +9,16 @@ import lombok.Data;
 @AllArgsConstructor
 @Builder
 @Schema(description = "Objeto que representa a resposta com uma mensagem")
-public class MessageResponseDTO {
+public class MessageResponseDTO<T> {
 
-    @Schema(description = "Mensagem de resposta", example = "Livro criado com sucesso")
+    @Schema(description = "Mensagem de resposta", example = "Dado retornado com sucesso")
     private String message;
+
+    @Schema(description = "Dados retornados pela operação")
+    private T data;
+
+    // Construtor adicional para casos onde apenas a mensagem é necessária
+    public MessageResponseDTO(String message) {
+        this.message = message;
+    }
 }

@@ -1,6 +1,5 @@
 package io.github.RobsonFe.ManagerBookAPI.dto;
 
-import io.github.RobsonFe.ManagerBookAPI.entity.Author;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;

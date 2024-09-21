@@ -1,5 +1,18 @@
 package io.github.RobsonFe.ManagerBookAPI.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
 import io.github.RobsonFe.ManagerBookAPI.dto.BookDTO;
 import io.github.RobsonFe.ManagerBookAPI.dto.MessageResponseDTO;
 import io.github.RobsonFe.ManagerBookAPI.exception.BookNotFoundExeption;
@@ -11,10 +24,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Page;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/books")
@@ -37,8 +46,8 @@ public class BookController {
                     content = @Content)
     })
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("criar/")
-    public MessageResponseDTO create(@RequestBody @Valid BookDTO bookDTO){
+    @PostMapping("/criar")
+    public MessageResponseDTO<BookDTO> create(@RequestBody @Valid BookDTO bookDTO) {
         return bookService.create(bookDTO);
     }
 
@@ -52,11 +61,11 @@ public class BookController {
                     content = @Content)
     })
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("buscar/{id}")
+    @GetMapping("/buscar/{id}")
     public BookDTO findById(@PathVariable Long id) throws BookNotFoundExeption {
-            return bookService.findById(id);
+        return bookService.findById(id).getData();
     }
-    
+
     @Operation(summary = "Busca um livro pelo Nome", description = "Retorna os detalhes de um livro específico com base no Nome fornecido")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Livro encontrado",
@@ -67,9 +76,9 @@ public class BookController {
                     content = @Content)
     })
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("find/{name}")
+    @GetMapping("/buscar/nome/{name}")
     public BookDTO findByName(@PathVariable String name) throws BookNotFoundExeption {
-        return bookService.findByName(name);
+        return bookService.findByName(name).getData();
     }
 
     @Operation(summary = "Lista todos os livros", description = "Retorna uma lista de todos os livros na biblioteca")
@@ -80,12 +89,12 @@ public class BookController {
                     content = @Content)
     })
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("listar")
-    public Page<BookDTO> findAll(
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "5") int size
+    @GetMapping("/listar")
+    public MessageResponseDTO<Page<BookDTO>> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
     ) {
-        return bookService.findAll(page,size);
+        return bookService.findAll(page, size);
     }
 
     @Operation(summary = "Atualiza um livro", description = "Atualiza as informações de um livro existente")
@@ -100,8 +109,8 @@ public class BookController {
                     content = @Content)
     })
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping("atualizar/{id}")
-    public MessageResponseDTO update(@PathVariable Long id, @RequestBody @Valid BookDTO bookDTO) throws BookNotFoundExeption {
+    @PutMapping("/atualizar/{id}")
+    public MessageResponseDTO<BookDTO> update(@PathVariable Long id, @RequestBody @Valid BookDTO bookDTO) throws BookNotFoundExeption {
         return bookService.update(id, bookDTO);
     }
 
@@ -115,8 +124,8 @@ public class BookController {
                     content = @Content)
     })
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("deletar/{id}")
-    public void delete(@PathVariable Long id) throws BookNotFoundExeption {
-        bookService.delete(id);
+    @DeleteMapping("/deletar/{id}")
+    public MessageResponseDTO<String> delete(@PathVariable Long id) throws BookNotFoundExeption {
+        return bookService.delete(id);
     }
 }

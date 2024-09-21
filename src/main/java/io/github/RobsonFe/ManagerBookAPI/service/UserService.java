@@ -1,17 +1,18 @@
 package io.github.RobsonFe.ManagerBookAPI.service;
 
-import io.github.RobsonFe.ManagerBookAPI.dto.UserDTO;
+import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+
 import io.github.RobsonFe.ManagerBookAPI.dto.MessageResponseDTO;
+import io.github.RobsonFe.ManagerBookAPI.dto.UserDTO;
 import io.github.RobsonFe.ManagerBookAPI.entity.User;
 import io.github.RobsonFe.ManagerBookAPI.exception.UserNotFoundException;
 import io.github.RobsonFe.ManagerBookAPI.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -19,7 +20,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public MessageResponseDTO create(@Valid UserDTO userDTO) {
+    public MessageResponseDTO<UserDTO> create(@Valid UserDTO userDTO) {
         User user = User.builder()
                 .username(userDTO.getUsername())
                 .email(userDTO.getEmail())
@@ -27,8 +28,9 @@ public class UserService {
                 .build();
         userRepository.save(user);
 
-        return MessageResponseDTO.builder()
+        return MessageResponseDTO.<UserDTO>builder()
                 .message("User created successfully with ID " + user.getId())
+                .data(userDTO)
                 .build();
     }
 
@@ -43,7 +45,7 @@ public class UserService {
         );
     }
 
-    public MessageResponseDTO update(Long id, @Valid UserDTO userDTO) throws UserNotFoundException {
+    public MessageResponseDTO<UserDTO> update(Long id, @Valid UserDTO userDTO) throws UserNotFoundException {
         verifyIfExists(id);
 
         User updatedUser = User.builder()
@@ -55,8 +57,9 @@ public class UserService {
 
         userRepository.save(updatedUser);
 
-        return MessageResponseDTO.builder()
+        return MessageResponseDTO.<UserDTO>builder()
                 .message("User updated successfully with ID " + id)
+                .data(userDTO)
                 .build();
     }
 

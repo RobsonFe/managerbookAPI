@@ -1,7 +1,20 @@
 package io.github.RobsonFe.ManagerBookAPI.controller;
 
-import io.github.RobsonFe.ManagerBookAPI.dto.UserDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
 import io.github.RobsonFe.ManagerBookAPI.dto.MessageResponseDTO;
+import io.github.RobsonFe.ManagerBookAPI.dto.UserDTO;
 import io.github.RobsonFe.ManagerBookAPI.exception.UserNotFoundException;
 import io.github.RobsonFe.ManagerBookAPI.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,9 +24,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -37,7 +47,7 @@ public class UserController {
     })
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/criar")
-    public MessageResponseDTO create(@RequestBody @Valid UserDTO userDTO) {
+    public MessageResponseDTO<UserDTO> create(@RequestBody @Valid UserDTO userDTO) {
         return userService.create(userDTO);
     }
 
@@ -84,7 +94,7 @@ public class UserController {
     })
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/atualizar/{id}")
-    public MessageResponseDTO update(@PathVariable Long id, @RequestBody @Valid UserDTO userDTO) throws UserNotFoundException {
+    public MessageResponseDTO<UserDTO> update(@PathVariable Long id, @RequestBody @Valid UserDTO userDTO) throws UserNotFoundException {
         return userService.update(id, userDTO);
     }
 

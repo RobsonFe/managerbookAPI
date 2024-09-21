@@ -230,10 +230,6 @@ Manager Books API is a system that provides endpoints to manage books and users.
 
 - `message` (string): Response message.
 
-## License
-
-This project is licensed under the [MIT License](LICENSE).
-
 ---
 
 ## Contact Information
@@ -243,4 +239,6 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## License
 
-This project is licensed under the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0).
+- This project is licensed under the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0).
+
+- This project is licensed under the [MIT License](LICENSE).
