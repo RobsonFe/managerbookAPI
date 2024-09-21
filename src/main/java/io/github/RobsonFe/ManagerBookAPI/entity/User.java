@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Schema(description = "Entidade representando o Usuário")
 @Entity
-public class UserModel {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

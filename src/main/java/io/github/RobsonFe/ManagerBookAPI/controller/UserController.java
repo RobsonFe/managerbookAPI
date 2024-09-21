@@ -16,7 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/user")
+@RequestMapping("/api/v1/users")
 @Tag(name = "Users", description = "API para gerenciamento de usuários")
 public class UserController {
 
