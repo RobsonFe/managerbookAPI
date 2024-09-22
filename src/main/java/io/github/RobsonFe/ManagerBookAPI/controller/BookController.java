@@ -39,7 +39,7 @@ public class BookController {
     @Operation(summary = "Cria um novo livro", description = "Adiciona um novo livro à biblioteca")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Livro criado com sucesso",
-                    content = @Content(schema = @Schema(implementation = MessageResponseDTO.class))),
+                    content = @Content(schema = @Schema(implementation = BookDTO.class))),
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos",
                     content = @Content),
             @ApiResponse(responseCode = "500", description = "Erro no servidor",
@@ -100,7 +100,7 @@ public class BookController {
     @Operation(summary = "Atualiza um livro", description = "Atualiza as informações de um livro existente")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Livro atualizado com sucesso",
-                    content = @Content(schema = @Schema(implementation = MessageResponseDTO.class))),
+                    content = @Content(schema = @Schema(implementation = BookDTO.class))),
             @ApiResponse(responseCode = "404", description = "Livro não encontrado",
                     content = @Content),
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos",

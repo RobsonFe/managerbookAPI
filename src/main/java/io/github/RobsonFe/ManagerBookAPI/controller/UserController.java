@@ -39,7 +39,7 @@ public class UserController {
     @Operation(summary = "Cria um novo usuário", description = "Adiciona um novo usuário ao sistema")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso",
-                    content = @Content(schema = @Schema(implementation = MessageResponseDTO.class))),
+                    content = @Content(schema = @Schema(implementation = UserDTO.class))),
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos",
                     content = @Content),
             @ApiResponse(responseCode = "500", description = "Erro no servidor",
@@ -84,7 +84,7 @@ public class UserController {
     @Operation(summary = "Atualiza um usuário", description = "Atualiza as informações de um usuário existente")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuário atualizado com sucesso",
-                    content = @Content(schema = @Schema(implementation = MessageResponseDTO.class))),
+                    content = @Content(schema = @Schema(implementation = UserDTO.class))),
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado",
                     content = @Content),
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos",
