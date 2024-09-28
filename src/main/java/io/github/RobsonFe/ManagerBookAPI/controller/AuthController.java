@@ -1,7 +1,12 @@
 package io.github.RobsonFe.ManagerBookAPI.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,6 +22,7 @@ import io.github.RobsonFe.ManagerBookAPI.dto.UserLoginDTO;
 import io.github.RobsonFe.ManagerBookAPI.service.TokenBlacklistService;
 import io.github.RobsonFe.ManagerBookAPI.service.UserService;
 import io.github.RobsonFe.ManagerBookAPI.utils.JwtUtil;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -41,20 +47,30 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody UserDTO userDTO) {
         MessageResponseDTO<UserDTO> user = userService.create(userDTO);
         return ResponseEntity.ok(user);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody UserLoginDTO loginDTO) throws Exception {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword()));
+    public ResponseEntity<?> createAuthenticationToken(@Valid @RequestBody UserLoginDTO loginDTO) {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword())
+            );
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+        }
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(loginDTO.getEmail());
-        final String jwt = jwtUtil.generateToken(userDetails);
+        final String accessToken = jwtUtil.generateAccessToken(userDetails);
+        final String refreshToken = jwtUtil.generateRefreshToken(userDetails);
 
-        return ResponseEntity.ok(new AuthenticationResponse(jwt));
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("access", accessToken);
+        tokens.put("refresh", refreshToken);
+
+        return ResponseEntity.ok(tokens);
     }
 
     @PostMapping("/logout")
@@ -71,17 +87,19 @@ public class AuthController {
         }
         return ResponseEntity.badRequest().body("Invalid Authorization header");
     }
-}
 
-class AuthenticationResponse {
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshToken(@RequestBody Map<String, String> request) {
+        String refreshToken = request.get("refresh");
+        if (refreshToken != null && jwtUtil.validateToken(refreshToken, userDetailsService.loadUserByUsername(jwtUtil.extractUsername(refreshToken)))) {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(jwtUtil.extractUsername(refreshToken));
+            String newAccessToken = jwtUtil.generateAccessToken(userDetails);
 
-    private final String jwt;
+            Map<String, String> tokens = new HashMap<>();
+            tokens.put("access", newAccessToken);
 
-    public AuthenticationResponse(String jwt) {
-        this.jwt = jwt;
-    }
-
-    public String getJwt() {
-        return jwt;
+            return ResponseEntity.ok(tokens);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
     }
 }
