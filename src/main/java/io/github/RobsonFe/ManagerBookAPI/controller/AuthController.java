@@ -22,10 +22,18 @@ import io.github.RobsonFe.ManagerBookAPI.dto.UserLoginDTO;
 import io.github.RobsonFe.ManagerBookAPI.service.TokenBlacklistService;
 import io.github.RobsonFe.ManagerBookAPI.service.UserService;
 import io.github.RobsonFe.ManagerBookAPI.utils.JwtUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Authentication", description = "API para autenticação de usuários")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
@@ -46,12 +54,30 @@ public class AuthController {
         this.tokenBlacklistService = tokenBlacklistService;
     }
 
+    @Operation(summary = "Registrar um novo usuário", description = "Cria uma nova conta de usuário na aplicação")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Usuário registrado com sucesso",
+                content = @Content(schema = @Schema(implementation = MessageResponseDTO.class))),
+        @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos",
+                content = @Content),
+        @ApiResponse(responseCode = "500", description = "Erro no servidor",
+                content = @Content)
+    })
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody UserDTO userDTO) {
         MessageResponseDTO<UserDTO> user = userService.create(userDTO);
         return ResponseEntity.ok(user);
     }
 
+    @Operation(summary = "Realiza login", description = "Autentica o usuário e gera tokens de acesso e refresh")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Login realizado com sucesso",
+                content = @Content(schema = @Schema(example = "{\"access\": \"<token>\", \"refresh\": \"<token>\"}"))),
+        @ApiResponse(responseCode = "401", description = "Credenciais inválidas",
+                content = @Content),
+        @ApiResponse(responseCode = "500", description = "Erro no servidor",
+                content = @Content)
+    })
     @PostMapping("/login")
     public ResponseEntity<?> createAuthenticationToken(@Valid @RequestBody UserLoginDTO loginDTO) {
         try {
@@ -67,12 +93,22 @@ public class AuthController {
         final String refreshToken = jwtUtil.generateRefreshToken(userDetails);
 
         Map<String, String> tokens = new HashMap<>();
-        tokens.put("access", accessToken);
         tokens.put("refresh", refreshToken);
+        tokens.put("access", accessToken);
 
         return ResponseEntity.ok(tokens);
     }
 
+    @Operation(summary = "Realiza logout", description = "Invalida o token de acesso atual")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Logout realizado com sucesso",
+                content = @Content),
+        @ApiResponse(responseCode = "400", description = "Token inválido",
+                content = @Content),
+        @ApiResponse(responseCode = "500", description = "Erro no servidor",
+                content = @Content)
+    })
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestHeader("Authorization") String authHeader) {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
@@ -88,6 +124,15 @@ public class AuthController {
         return ResponseEntity.badRequest().body("Invalid Authorization header");
     }
 
+    @Operation(summary = "Atualiza o token de acesso", description = "Gera um novo token de acesso a partir do token de refresh válido")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Token de acesso atualizado com sucesso",
+                content = @Content(schema = @Schema(example = "{\"access\": \"<new_access_token>\"}"))),
+        @ApiResponse(responseCode = "401", description = "Token de refresh inválido",
+                content = @Content),
+        @ApiResponse(responseCode = "500", description = "Erro no servidor",
+                content = @Content)
+    })
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(@RequestBody Map<String, String> request) {
         String refreshToken = request.get("refresh");
