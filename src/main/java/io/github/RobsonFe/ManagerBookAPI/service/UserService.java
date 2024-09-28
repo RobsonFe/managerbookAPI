@@ -2,8 +2,10 @@ package io.github.RobsonFe.ManagerBookAPI.service;
 
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import io.github.RobsonFe.ManagerBookAPI.dto.MessageResponseDTO;
@@ -18,18 +20,31 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class UserService {
 
+    @Autowired
     private final UserRepository userRepository;
 
+    @Autowired
+    private final PasswordEncoder passwordEncoder;
+
     public MessageResponseDTO<UserDTO> create(@Valid UserDTO userDTO) {
+
+        if (!userDTO.getPassword().equals(userDTO.getConfirmPassword())) {
+            throw new RuntimeException("As senhas não são iguais!");
+        }
+
+        if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
+            throw new RuntimeException("O E-mail informado já existe no sistema");
+        }
+
         User user = User.builder()
                 .username(userDTO.getUsername())
                 .email(userDTO.getEmail())
-                .password(userDTO.getPassword())
+                .password(passwordEncoder.encode(userDTO.getPassword()))
                 .build();
         userRepository.save(user);
 
         return MessageResponseDTO.<UserDTO>builder()
-                .message("User created successfully with ID " + user.getId())
+                .message("Usuário Criado com Sucesso! " + user.getId())
                 .data(userDTO)
                 .build();
     }
