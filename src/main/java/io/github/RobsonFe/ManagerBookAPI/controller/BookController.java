@@ -22,11 +22,13 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/books")
+@SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Books", description = "API para gerenciamento de livros")
 public class BookController {
 
@@ -38,12 +40,12 @@ public class BookController {
 
     @Operation(summary = "Cria um novo livro", description = "Adiciona um novo livro à biblioteca")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Livro criado com sucesso",
-                    content = @Content(schema = @Schema(implementation = BookDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos",
-                    content = @Content),
-            @ApiResponse(responseCode = "500", description = "Erro no servidor",
-                    content = @Content)
+        @ApiResponse(responseCode = "201", description = "Livro criado com sucesso",
+                content = @Content(schema = @Schema(implementation = BookDTO.class))),
+        @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos",
+                content = @Content),
+        @ApiResponse(responseCode = "500", description = "Erro no servidor",
+                content = @Content)
     })
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/criar")
@@ -53,12 +55,12 @@ public class BookController {
 
     @Operation(summary = "Busca um livro pelo ID", description = "Retorna os detalhes de um livro específico com base no ID fornecido")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Livro encontrado",
-                    content = @Content(schema = @Schema(implementation = BookDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Livro não encontrado",
-                    content = @Content),
-            @ApiResponse(responseCode = "500", description = "Erro no servidor",
-                    content = @Content)
+        @ApiResponse(responseCode = "200", description = "Livro encontrado",
+                content = @Content(schema = @Schema(implementation = BookDTO.class))),
+        @ApiResponse(responseCode = "404", description = "Livro não encontrado",
+                content = @Content),
+        @ApiResponse(responseCode = "500", description = "Erro no servidor",
+                content = @Content)
     })
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/buscar/{id}")
@@ -68,12 +70,12 @@ public class BookController {
 
     @Operation(summary = "Busca um livro pelo Nome", description = "Retorna os detalhes de um livro específico com base no Nome fornecido")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Livro encontrado",
-                    content = @Content(schema = @Schema(implementation = BookDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Livro não encontrado",
-                    content = @Content),
-            @ApiResponse(responseCode = "500", description = "Erro no servidor",
-                    content = @Content)
+        @ApiResponse(responseCode = "200", description = "Livro encontrado",
+                content = @Content(schema = @Schema(implementation = BookDTO.class))),
+        @ApiResponse(responseCode = "404", description = "Livro não encontrado",
+                content = @Content),
+        @ApiResponse(responseCode = "500", description = "Erro no servidor",
+                content = @Content)
     })
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/buscar/nome/{name}")
@@ -83,10 +85,10 @@ public class BookController {
 
     @Operation(summary = "Lista todos os livros", description = "Retorna uma lista de todos os livros na biblioteca")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista de livros retornada com sucesso",
-                    content = @Content(schema = @Schema(implementation = BookDTO.class))),
-            @ApiResponse(responseCode = "500", description = "Erro no servidor",
-                    content = @Content)
+        @ApiResponse(responseCode = "200", description = "Lista de livros retornada com sucesso",
+                content = @Content(schema = @Schema(implementation = BookDTO.class))),
+        @ApiResponse(responseCode = "500", description = "Erro no servidor",
+                content = @Content)
     })
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/listar")
@@ -99,14 +101,14 @@ public class BookController {
 
     @Operation(summary = "Atualiza um livro", description = "Atualiza as informações de um livro existente")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Livro atualizado com sucesso",
-                    content = @Content(schema = @Schema(implementation = BookDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Livro não encontrado",
-                    content = @Content),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos",
-                    content = @Content),
-            @ApiResponse(responseCode = "500", description = "Erro no servidor",
-                    content = @Content)
+        @ApiResponse(responseCode = "200", description = "Livro atualizado com sucesso",
+                content = @Content(schema = @Schema(implementation = BookDTO.class))),
+        @ApiResponse(responseCode = "404", description = "Livro não encontrado",
+                content = @Content),
+        @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos",
+                content = @Content),
+        @ApiResponse(responseCode = "500", description = "Erro no servidor",
+                content = @Content)
     })
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/atualizar/{id}")
@@ -116,12 +118,12 @@ public class BookController {
 
     @Operation(summary = "Deleta um livro", description = "Remove um livro da biblioteca pelo ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Livro deletado com sucesso",
-                    content = @Content),
-            @ApiResponse(responseCode = "404", description = "Livro não encontrado",
-                    content = @Content),
-            @ApiResponse(responseCode = "500", description = "Erro no servidor",
-                    content = @Content)
+        @ApiResponse(responseCode = "204", description = "Livro deletado com sucesso",
+                content = @Content),
+        @ApiResponse(responseCode = "404", description = "Livro não encontrado",
+                content = @Content),
+        @ApiResponse(responseCode = "500", description = "Erro no servidor",
+                content = @Content)
     })
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/deletar/{id}")
