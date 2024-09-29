@@ -94,7 +94,7 @@ public class BookController {
     @GetMapping("/listar")
     public MessageResponseDTO<Page<BookDTO>> findAll(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size
+            @RequestParam(defaultValue = "10") int size
     ) {
         return bookService.findAll(page, size);
     }

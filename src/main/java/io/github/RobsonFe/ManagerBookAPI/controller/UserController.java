@@ -80,7 +80,7 @@ public class UserController {
     @GetMapping("/listar")
     public Page<UserDTO> findAll(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
+            @RequestParam(defaultValue = "10") int size) {
         return userService.findAll(page, size);
     }
 

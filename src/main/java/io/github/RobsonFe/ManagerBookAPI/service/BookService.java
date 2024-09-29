@@ -84,7 +84,7 @@ public class BookService {
         
         return MessageResponseDTO.<String>builder()
                 .message("Livro deletado com sucesso")
-                .data("ID do livro deletado: " + id)
+                .data("ID do livro deletado: " + "com " + id)
                 .build();
     }
 
